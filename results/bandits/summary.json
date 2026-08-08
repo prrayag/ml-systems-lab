@@ -1,0 +1,58 @@
+{
+  "probabilities": [
+    0.1,
+    0.35,
+    0.6,
+    0.45,
+    0.8
+  ],
+  "steps": 2000,
+  "runs": 200,
+  "seed": 7,
+  "standard_comparison": {
+    "epsilon-greedy (0.1)": {
+      "final_average_reward": 0.7705,
+      "final_cumulative_reward": 1500.875,
+      "final_optimal_action_rate": 0.9194,
+      "final_cumulative_regret": 101.583
+    },
+    "optimistic values": {
+      "final_average_reward": 0.7058,
+      "final_cumulative_reward": 1428.745,
+      "final_optimal_action_rate": 0.715,
+      "final_cumulative_regret": 171.8568
+    },
+    "ucb1": {
+      "final_average_reward": 0.764,
+      "final_cumulative_reward": 1436.535,
+      "final_optimal_action_rate": 0.867,
+      "final_cumulative_regret": 163.466
+    },
+    "thompson sampling": {
+      "final_average_reward": 0.8023,
+      "final_cumulative_reward": 1578.98,
+      "final_optimal_action_rate": 0.9947,
+      "final_cumulative_regret": 21.7337
+    }
+  },
+  "epsilon_comparison": {
+    "epsilon-greedy (0.01)": {
+      "final_average_reward": 0.7709,
+      "final_cumulative_reward": 1316.325,
+      "final_optimal_action_rate": 0.8929,
+      "final_cumulative_regret": 282.0168
+    },
+    "epsilon-greedy (0.1)": {
+      "final_average_reward": 0.7612,
+      "final_cumulative_reward": 1499.41,
+      "final_optimal_action_rate": 0.9187,
+      "final_cumulative_regret": 100.6553
+    },
+    "epsilon-greedy (0.2)": {
+      "final_average_reward": 0.7319,
+      "final_cumulative_reward": 1449.305,
+      "final_optimal_action_rate": 0.8438,
+      "final_cumulative_regret": 151.4747
+    }
+  }
+}
