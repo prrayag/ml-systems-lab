@@ -8,6 +8,13 @@ from ml_systems_lab.bandits.agents import (
     UCBAgent,
 )
 from ml_systems_lab.bandits.environment import BernoulliBandit
+from ml_systems_lab.bandits.metrics import (
+    average_reward,
+    cumulative_regret,
+    cumulative_reward,
+    instantaneous_regret,
+    optimal_action_rate,
+)
 
 
 def test_environment_returns_bernoulli_rewards():
@@ -163,3 +170,33 @@ def test_thompson_sampling_rejects_non_bernoulli_reward():
 
     with pytest.raises(ValueError):
         agent.update(0, 2)
+
+
+def test_average_and_cumulative_reward():
+    rewards = np.array([[1, 0, 1], [0, 1, 1]])
+
+    np.testing.assert_allclose(average_reward(rewards), np.array([0.5, 0.5, 1.0]))
+    np.testing.assert_array_equal(
+        cumulative_reward(rewards),
+        np.array([[1, 1, 2], [0, 1, 2]]),
+    )
+
+
+def test_optimal_action_rate():
+    actions = np.array([[0, 2, 2], [1, 2, 0]])
+
+    np.testing.assert_allclose(optimal_action_rate(actions, 2), np.array([0.0, 1.0, 0.5]))
+
+
+def test_regret_uses_expected_arm_rewards():
+    probabilities = np.array([0.2, 0.8])
+    actions = np.array([[0, 1, 0]])
+
+    np.testing.assert_allclose(
+        instantaneous_regret(actions, probabilities),
+        np.array([[0.6, 0.0, 0.6]]),
+    )
+    np.testing.assert_allclose(
+        cumulative_regret(actions, probabilities),
+        np.array([[0.6, 0.6, 1.2]]),
+    )
