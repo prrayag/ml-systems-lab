@@ -4,6 +4,7 @@ import pytest
 from ml_systems_lab.bandits.agents import (
     EpsilonGreedyAgent,
     OptimisticInitialValuesAgent,
+    ThompsonSamplingAgent,
     UCBAgent,
 )
 from ml_systems_lab.bandits.environment import BernoulliBandit
@@ -128,3 +129,37 @@ def test_ucb_reset_clears_state():
     np.testing.assert_array_equal(agent.counts, np.array([0, 0]))
     np.testing.assert_allclose(agent.values, np.array([0.0, 0.0]))
     assert agent.t == 0
+
+
+def test_thompson_sampling_alpha_update_after_success():
+    agent = ThompsonSamplingAgent(n_arms=2, seed=31)
+
+    agent.update(1, 1)
+
+    np.testing.assert_allclose(agent.alpha, np.array([1.0, 2.0]))
+    np.testing.assert_allclose(agent.beta, np.array([1.0, 1.0]))
+
+
+def test_thompson_sampling_beta_update_after_failure():
+    agent = ThompsonSamplingAgent(n_arms=2, seed=31)
+
+    agent.update(0, 0)
+
+    np.testing.assert_allclose(agent.alpha, np.array([1.0, 1.0]))
+    np.testing.assert_allclose(agent.beta, np.array([2.0, 1.0]))
+
+
+def test_thompson_sampling_reproducible_with_fixed_seed():
+    first = ThompsonSamplingAgent(n_arms=4, seed=41)
+    second = ThompsonSamplingAgent(n_arms=4, seed=41)
+
+    assert [first.select_action() for _ in range(8)] == [
+        second.select_action() for _ in range(8)
+    ]
+
+
+def test_thompson_sampling_rejects_non_bernoulli_reward():
+    agent = ThompsonSamplingAgent(n_arms=2)
+
+    with pytest.raises(ValueError):
+        agent.update(0, 2)

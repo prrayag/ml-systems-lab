@@ -122,3 +122,37 @@ class UCBAgent(BanditAgent):
         self.counts[action] += 1
         step_size = 1.0 / self.counts[action]
         self.values[action] += step_size * (reward - self.values[action])
+
+
+class ThompsonSamplingAgent(BanditAgent):
+    """Thompson Sampling for Bernoulli rewards."""
+
+    def __init__(self, n_arms: int, seed: int | None = None):
+        if n_arms <= 0:
+            raise ValueError("n_arms must be positive")
+
+        self.n_arms = n_arms
+        self.seed = seed
+        self.rng = np.random.default_rng(seed)
+        self.alpha = np.ones(n_arms, dtype=float)
+        self.beta = np.ones(n_arms, dtype=float)
+
+    def reset(self) -> None:
+        self.rng = np.random.default_rng(self.seed)
+        self.alpha.fill(1.0)
+        self.beta.fill(1.0)
+
+    def select_action(self) -> int:
+        samples = self.rng.beta(self.alpha, self.beta)
+        return int(np.argmax(samples))
+
+    def update(self, action: int, reward: int) -> None:
+        if action < 0 or action >= self.n_arms:
+            raise ValueError(f"invalid action {action}")
+        if reward not in (0, 1):
+            raise ValueError("reward must be 0 or 1")
+
+        if reward == 1:
+            self.alpha[action] += 1
+        else:
+            self.beta[action] += 1
