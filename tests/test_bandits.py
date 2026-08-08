@@ -8,6 +8,11 @@ from ml_systems_lab.bandits.agents import (
     UCBAgent,
 )
 from ml_systems_lab.bandits.environment import BernoulliBandit
+from ml_systems_lab.bandits.experiment import (
+    epsilon_agents,
+    run_comparison,
+    standard_agents,
+)
 from ml_systems_lab.bandits.metrics import (
     average_reward,
     cumulative_regret,
@@ -199,4 +204,53 @@ def test_regret_uses_expected_arm_rewards():
     np.testing.assert_allclose(
         cumulative_regret(actions, probabilities),
         np.array([[0.6, 0.6, 1.2]]),
+    )
+
+
+def test_run_comparison_returns_expected_shapes():
+    results = run_comparison(
+        {"epsilon": standard_agents()["epsilon-greedy (0.1)"]},
+        probabilities=[0.2, 0.8],
+        steps=12,
+        runs=4,
+        seed=101,
+    )
+
+    assert set(results["epsilon"]) == {
+        "average_reward",
+        "cumulative_reward",
+        "optimal_action_rate",
+        "cumulative_regret",
+        "final_average_reward",
+        "final_cumulative_reward",
+        "final_optimal_action_rate",
+        "final_cumulative_regret",
+    }
+    assert results["epsilon"]["average_reward"].shape == (12,)
+    assert results["epsilon"]["cumulative_regret"].shape == (12,)
+
+
+def test_run_comparison_reproducible_with_same_seed():
+    first = run_comparison(
+        {"epsilon": epsilon_agents()["epsilon-greedy (0.1)"]},
+        probabilities=[0.3, 0.7],
+        steps=15,
+        runs=5,
+        seed=202,
+    )
+    second = run_comparison(
+        {"epsilon": epsilon_agents()["epsilon-greedy (0.1)"]},
+        probabilities=[0.3, 0.7],
+        steps=15,
+        runs=5,
+        seed=202,
+    )
+
+    np.testing.assert_allclose(
+        first["epsilon"]["average_reward"],
+        second["epsilon"]["average_reward"],
+    )
+    np.testing.assert_allclose(
+        first["epsilon"]["cumulative_regret"],
+        second["epsilon"]["cumulative_regret"],
     )
