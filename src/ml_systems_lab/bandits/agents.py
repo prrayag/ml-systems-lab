@@ -48,3 +48,77 @@ class EpsilonGreedyAgent(BanditAgent):
         step_size = 1.0 / self.counts[action]
         self.values[action] += step_size * (reward - self.values[action])
 
+
+class OptimisticInitialValuesAgent(BanditAgent):
+    """Greedy agent initialized with optimistic value estimates."""
+
+    def __init__(
+        self,
+        n_arms: int,
+        initial_value: float = 1.0,
+        seed: int | None = None,
+    ):
+        if n_arms <= 0:
+            raise ValueError("n_arms must be positive")
+
+        self.n_arms = n_arms
+        self.initial_value = initial_value
+        self.seed = seed
+        self.rng = np.random.default_rng(seed)
+        self.counts = np.zeros(n_arms, dtype=int)
+        self.values = np.full(n_arms, initial_value, dtype=float)
+
+    def reset(self) -> None:
+        self.rng = np.random.default_rng(self.seed)
+        self.counts.fill(0)
+        self.values.fill(self.initial_value)
+
+    def select_action(self) -> int:
+        return int(np.argmax(self.values))
+
+    def update(self, action: int, reward: int) -> None:
+        if action < 0 or action >= self.n_arms:
+            raise ValueError(f"invalid action {action}")
+
+        self.counts[action] += 1
+        step_size = 1.0 / self.counts[action]
+        self.values[action] += step_size * (reward - self.values[action])
+
+
+class UCBAgent(BanditAgent):
+    """Upper Confidence Bound action selection."""
+
+    def __init__(self, n_arms: int, c: float = 2.0):
+        if n_arms <= 0:
+            raise ValueError("n_arms must be positive")
+        if c < 0.0:
+            raise ValueError("c must be non-negative")
+
+        self.n_arms = n_arms
+        self.c = c
+        self.counts = np.zeros(n_arms, dtype=int)
+        self.values = np.zeros(n_arms, dtype=float)
+        self.t = 0
+
+    def reset(self) -> None:
+        self.counts.fill(0)
+        self.values.fill(0.0)
+        self.t = 0
+
+    def select_action(self) -> int:
+        # Pull every arm once before applying the UCB formula.
+        untried = np.flatnonzero(self.counts == 0)
+        if len(untried) > 0:
+            return int(untried[0])
+
+        scores = self.values + self.c * np.sqrt(np.log(self.t) / self.counts)
+        return int(np.argmax(scores))
+
+    def update(self, action: int, reward: int) -> None:
+        if action < 0 or action >= self.n_arms:
+            raise ValueError(f"invalid action {action}")
+
+        self.t += 1
+        self.counts[action] += 1
+        step_size = 1.0 / self.counts[action]
+        self.values[action] += step_size * (reward - self.values[action])

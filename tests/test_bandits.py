@@ -1,7 +1,11 @@
 import numpy as np
 import pytest
 
-from ml_systems_lab.bandits.agents import EpsilonGreedyAgent
+from ml_systems_lab.bandits.agents import (
+    EpsilonGreedyAgent,
+    OptimisticInitialValuesAgent,
+    UCBAgent,
+)
 from ml_systems_lab.bandits.environment import BernoulliBandit
 
 
@@ -77,3 +81,50 @@ def test_epsilon_one_explores_with_seeded_rng():
     assert first_actions == second_actions
     assert len(set(first_actions)) > 1
 
+
+def test_optimistic_agent_starts_with_configured_values():
+    agent = OptimisticInitialValuesAgent(n_arms=3, initial_value=2.5)
+
+    np.testing.assert_allclose(agent.values, np.array([2.5, 2.5, 2.5]))
+
+
+def test_optimistic_agent_uses_incremental_value_update():
+    agent = OptimisticInitialValuesAgent(n_arms=2, initial_value=1.0)
+
+    agent.update(0, 0)
+    agent.update(0, 1)
+
+    assert agent.counts[0] == 2
+    assert agent.values[0] == pytest.approx(0.5)
+
+
+def test_ucb_selects_each_arm_once_initially():
+    agent = UCBAgent(n_arms=3, c=2.0)
+
+    actions = []
+    for _ in range(3):
+        action = agent.select_action()
+        actions.append(action)
+        agent.update(action, 0)
+
+    assert actions == [0, 1, 2]
+
+
+def test_ucb_selection_after_all_arms_are_tried():
+    agent = UCBAgent(n_arms=2, c=1.0)
+    agent.update(0, 1)
+    agent.update(1, 0)
+
+    assert agent.select_action() == 0
+
+
+def test_ucb_reset_clears_state():
+    agent = UCBAgent(n_arms=2, c=1.0)
+    agent.update(0, 1)
+    agent.update(1, 0)
+
+    agent.reset()
+
+    np.testing.assert_array_equal(agent.counts, np.array([0, 0]))
+    np.testing.assert_allclose(agent.values, np.array([0.0, 0.0]))
+    assert agent.t == 0
