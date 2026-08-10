@@ -117,6 +117,13 @@ def main() -> None:
         RESULTS_DIR / "cumulative_regret.png",
     )
     plot_metric(
+        standard,
+        "cumulative_reward",
+        "Cumulative Reward",
+        "Total reward",
+        RESULTS_DIR / "cumulative_reward.png",
+    )
+    plot_metric(
         epsilon,
         "cumulative_regret",
         "Epsilon-Greedy Cumulative Regret",

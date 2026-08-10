@@ -60,6 +60,8 @@ Results below come from:
 
 ![Cumulative regret](results/bandits/cumulative_regret.png)
 
+![Cumulative reward](results/bandits/cumulative_reward.png)
+
 ![Epsilon comparison](results/bandits/epsilon_comparison.png)
 
 ## Running
