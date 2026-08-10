@@ -33,6 +33,7 @@ Default run:
 - 2000 steps
 - 200 independent runs
 - fixed master seed
+- shaded bands show approximate 95% confidence intervals across runs
 
 The main comparison uses epsilon-greedy with `epsilon = 0.1`, optimistic initial values, UCB1, and Thompson Sampling.
 
@@ -48,10 +49,10 @@ Results below come from:
 
 | Algorithm | Final avg reward | Final optimal action rate | Final cumulative regret |
 | --- | ---: | ---: | ---: |
-| Epsilon-greedy (0.1) | 0.7705 | 0.9194 | 101.5830 |
-| Optimistic values | 0.7058 | 0.7150 | 171.8568 |
-| UCB1 | 0.7640 | 0.8670 | 163.4660 |
-| Thompson Sampling | 0.8023 | 0.9947 | 21.7337 |
+| Epsilon-greedy (0.1) | 0.7706 | 0.9194 | 101.5830 [96.2261, 106.9399] |
+| Optimistic values | 0.7059 | 0.7150 | 171.8568 [129.1014, 214.6121] |
+| UCB1 | 0.7639 | 0.8670 | 163.4660 [161.4899, 165.4421] |
+| Thompson Sampling | 0.8023 | 0.9947 | 21.7337 [20.6283, 22.8392] |
 
 ![Average reward](results/bandits/average_reward.png)
 
@@ -85,6 +86,7 @@ Useful options:
 
 - Thompson Sampling performs best in this setup because it quickly concentrates probability mass on the best arm while still exploring uncertain arms.
 - Epsilon-greedy with `epsilon = 0.01` has lower final regret slope but often learns too slowly early on.
+- Optimistic initial values are more variable here, which shows up in the wider regret interval.
 - Regret is calculated from expected arm rewards, not sampled rewards, so it measures action quality rather than reward noise.
 
 ## Next
