@@ -26,6 +26,11 @@ DEFAULT_PROBABILITIES = np.array([0.10, 0.35, 0.60, 0.45, 0.80])
 AgentFactory = Callable[[int, int], BanditAgent]
 
 
+def _scalar_interval(values: np.ndarray) -> tuple[float, float, float]:
+    mean, lower, upper = mean_confidence_interval(values[:, np.newaxis])
+    return float(mean[0]), float(lower[0]), float(upper[0])
+
+
 def standard_agents() -> dict[str, AgentFactory]:
     return {
         "epsilon-greedy (0.1)": lambda n_arms, seed: EpsilonGreedyAgent(
@@ -121,6 +126,11 @@ def run_comparison(
         optimal_mean, optimal_lower, optimal_upper = mean_confidence_interval(optimal_actions)
         regret_mean, regret_lower, regret_upper = mean_confidence_interval(regret)
         cumulative_reward_mean = np.mean(total_reward, axis=0)
+        final_reward = np.mean(rewards[:, -100:], axis=1)
+        final_optimal = np.mean(optimal_actions[:, -100:], axis=1)
+        reward_value, reward_final_lower, reward_final_upper = _scalar_interval(final_reward)
+        optimal_value, optimal_final_lower, optimal_final_upper = _scalar_interval(final_optimal)
+        regret_value, regret_final_lower, regret_final_upper = _scalar_interval(regret[:, -1])
 
         results[name] = {
             "average_reward": average_reward(rewards),
@@ -133,10 +143,16 @@ def run_comparison(
             "cumulative_regret": regret_mean,
             "cumulative_regret_lower": regret_lower,
             "cumulative_regret_upper": regret_upper,
-            "final_average_reward": float(np.mean(rewards[:, -100:])),
+            "final_average_reward": reward_value,
+            "final_average_reward_lower": reward_final_lower,
+            "final_average_reward_upper": reward_final_upper,
             "final_cumulative_reward": float(np.mean(total_reward[:, -1])),
-            "final_optimal_action_rate": float(np.mean(optimal_actions[:, -100:])),
-            "final_cumulative_regret": float(np.mean(regret[:, -1])),
+            "final_optimal_action_rate": optimal_value,
+            "final_optimal_action_rate_lower": optimal_final_lower,
+            "final_optimal_action_rate_upper": optimal_final_upper,
+            "final_cumulative_regret": regret_value,
+            "final_cumulative_regret_lower": regret_final_lower,
+            "final_cumulative_regret_upper": regret_final_upper,
         }
 
     return results

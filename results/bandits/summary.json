@@ -11,48 +11,90 @@
   "seed": 7,
   "standard_comparison": {
     "epsilon-greedy (0.1)": {
-      "final_average_reward": 0.7705,
+      "final_average_reward": 0.7706,
+      "final_average_reward_lower": 0.7649,
+      "final_average_reward_upper": 0.7762,
       "final_cumulative_reward": 1500.875,
       "final_optimal_action_rate": 0.9194,
-      "final_cumulative_regret": 101.583
+      "final_optimal_action_rate_lower": 0.9157,
+      "final_optimal_action_rate_upper": 0.923,
+      "final_cumulative_regret": 101.583,
+      "final_cumulative_regret_lower": 96.2261,
+      "final_cumulative_regret_upper": 106.9399
     },
     "optimistic values": {
-      "final_average_reward": 0.7058,
+      "final_average_reward": 0.7059,
+      "final_average_reward_lower": 0.6838,
+      "final_average_reward_upper": 0.7279,
       "final_cumulative_reward": 1428.745,
       "final_optimal_action_rate": 0.715,
-      "final_cumulative_regret": 171.8568
+      "final_optimal_action_rate_lower": 0.6523,
+      "final_optimal_action_rate_upper": 0.7777,
+      "final_cumulative_regret": 171.8568,
+      "final_cumulative_regret_lower": 129.1014,
+      "final_cumulative_regret_upper": 214.6121
     },
     "ucb1": {
-      "final_average_reward": 0.764,
+      "final_average_reward": 0.7639,
+      "final_average_reward_lower": 0.7566,
+      "final_average_reward_upper": 0.7713,
       "final_cumulative_reward": 1436.535,
       "final_optimal_action_rate": 0.867,
-      "final_cumulative_regret": 163.466
+      "final_optimal_action_rate_lower": 0.8522,
+      "final_optimal_action_rate_upper": 0.8818,
+      "final_cumulative_regret": 163.466,
+      "final_cumulative_regret_lower": 161.4899,
+      "final_cumulative_regret_upper": 165.4421
     },
     "thompson sampling": {
       "final_average_reward": 0.8023,
+      "final_average_reward_lower": 0.796,
+      "final_average_reward_upper": 0.8086,
       "final_cumulative_reward": 1578.98,
       "final_optimal_action_rate": 0.9947,
-      "final_cumulative_regret": 21.7337
+      "final_optimal_action_rate_lower": 0.9935,
+      "final_optimal_action_rate_upper": 0.9958,
+      "final_cumulative_regret": 21.7337,
+      "final_cumulative_regret_lower": 20.6283,
+      "final_cumulative_regret_upper": 22.8392
     }
   },
   "epsilon_comparison": {
     "epsilon-greedy (0.01)": {
       "final_average_reward": 0.7709,
+      "final_average_reward_lower": 0.7588,
+      "final_average_reward_upper": 0.7829,
       "final_cumulative_reward": 1316.325,
       "final_optimal_action_rate": 0.8929,
-      "final_cumulative_regret": 282.0168
+      "final_optimal_action_rate_lower": 0.8516,
+      "final_optimal_action_rate_upper": 0.9341,
+      "final_cumulative_regret": 282.0168,
+      "final_cumulative_regret_lower": 250.687,
+      "final_cumulative_regret_upper": 313.3465
     },
     "epsilon-greedy (0.1)": {
       "final_average_reward": 0.7612,
+      "final_average_reward_lower": 0.7555,
+      "final_average_reward_upper": 0.7669,
       "final_cumulative_reward": 1499.41,
       "final_optimal_action_rate": 0.9187,
-      "final_cumulative_regret": 100.6553
+      "final_optimal_action_rate_lower": 0.9147,
+      "final_optimal_action_rate_upper": 0.9227,
+      "final_cumulative_regret": 100.6553,
+      "final_cumulative_regret_lower": 95.9284,
+      "final_cumulative_regret_upper": 105.3821
     },
     "epsilon-greedy (0.2)": {
       "final_average_reward": 0.7319,
+      "final_average_reward_lower": 0.7258,
+      "final_average_reward_upper": 0.738,
       "final_cumulative_reward": 1449.305,
-      "final_optimal_action_rate": 0.8438,
-      "final_cumulative_regret": 151.4747
+      "final_optimal_action_rate": 0.8439,
+      "final_optimal_action_rate_lower": 0.8387,
+      "final_optimal_action_rate_upper": 0.849,
+      "final_cumulative_regret": 151.4747,
+      "final_cumulative_regret_lower": 148.1729,
+      "final_cumulative_regret_upper": 154.7766
     }
   }
 }

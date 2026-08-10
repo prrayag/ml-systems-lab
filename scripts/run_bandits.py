@@ -60,9 +60,15 @@ def plot_metric(
 def summarize(results: dict) -> dict[str, dict[str, float]]:
     fields = [
         "final_average_reward",
+        "final_average_reward_lower",
+        "final_average_reward_upper",
         "final_cumulative_reward",
         "final_optimal_action_rate",
+        "final_optimal_action_rate_lower",
+        "final_optimal_action_rate_upper",
         "final_cumulative_regret",
+        "final_cumulative_regret_lower",
+        "final_cumulative_regret_upper",
     ]
     return {
         name: {field: round(float(values[field]), 4) for field in fields}
