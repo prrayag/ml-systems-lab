@@ -42,7 +42,12 @@ def plot_metric(
 ) -> None:
     plt.figure(figsize=(8, 5))
     for name, values in results.items():
-        plt.plot(values[metric], label=name)
+        line = plt.plot(values[metric], label=name)[0]
+        lower = values.get(f"{metric}_lower")
+        upper = values.get(f"{metric}_upper")
+        if lower is not None and upper is not None:
+            steps = range(len(values[metric]))
+            plt.fill_between(steps, lower, upper, color=line.get_color(), alpha=0.12)
     plt.title(title)
     plt.xlabel("Step")
     plt.ylabel(ylabel)
