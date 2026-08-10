@@ -18,6 +18,7 @@ from ml_systems_lab.bandits.metrics import (
     cumulative_regret,
     cumulative_reward,
     instantaneous_regret,
+    mean_confidence_interval,
     optimal_action_rate,
 )
 
@@ -205,6 +206,26 @@ def test_regret_uses_expected_arm_rewards():
         cumulative_regret(actions, probabilities),
         np.array([[0.6, 0.6, 1.2]]),
     )
+
+
+def test_mean_confidence_interval():
+    values = np.array([[1.0, 2.0], [3.0, 6.0], [5.0, 10.0]])
+
+    mean, lower, upper = mean_confidence_interval(values)
+
+    np.testing.assert_allclose(mean, np.array([3.0, 6.0]))
+    np.testing.assert_allclose(lower, np.array([0.7368, 1.4736]), atol=1e-4)
+    np.testing.assert_allclose(upper, np.array([5.2632, 10.5264]), atol=1e-4)
+
+
+def test_mean_confidence_interval_for_single_run():
+    values = np.array([[1.0, 0.5, 0.25]])
+
+    mean, lower, upper = mean_confidence_interval(values)
+
+    np.testing.assert_allclose(mean, values[0])
+    np.testing.assert_allclose(lower, values[0])
+    np.testing.assert_allclose(upper, values[0])
 
 
 def test_run_comparison_returns_expected_shapes():

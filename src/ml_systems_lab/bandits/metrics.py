@@ -15,6 +15,16 @@ def optimal_action_rate(actions: np.ndarray, optimal_action: int) -> np.ndarray:
     return np.mean(actions == optimal_action, axis=0)
 
 
+def mean_confidence_interval(values: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    mean = np.mean(values, axis=0)
+    if values.shape[0] < 2:
+        return mean, mean.copy(), mean.copy()
+
+    standard_error = np.std(values, axis=0, ddof=1) / np.sqrt(values.shape[0])
+    margin = 1.96 * standard_error
+    return mean, mean - margin, mean + margin
+
+
 def instantaneous_regret(
     actions: np.ndarray,
     probabilities: list[float] | np.ndarray,
@@ -31,4 +41,3 @@ def cumulative_regret(
 ) -> np.ndarray:
     regret = instantaneous_regret(actions, probabilities)
     return np.cumsum(regret, axis=-1)
-
