@@ -239,16 +239,24 @@ def test_run_comparison_returns_expected_shapes():
 
     assert set(results["epsilon"]) == {
         "average_reward",
+        "average_reward_lower",
+        "average_reward_upper",
         "cumulative_reward",
         "optimal_action_rate",
+        "optimal_action_rate_lower",
+        "optimal_action_rate_upper",
         "cumulative_regret",
+        "cumulative_regret_lower",
+        "cumulative_regret_upper",
         "final_average_reward",
         "final_cumulative_reward",
         "final_optimal_action_rate",
         "final_cumulative_regret",
     }
     assert results["epsilon"]["average_reward"].shape == (12,)
+    assert results["epsilon"]["average_reward_lower"].shape == (12,)
     assert results["epsilon"]["cumulative_regret"].shape == (12,)
+    assert results["epsilon"]["cumulative_regret_upper"].shape == (12,)
 
 
 def test_run_comparison_reproducible_with_same_seed():

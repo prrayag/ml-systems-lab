@@ -16,6 +16,7 @@ from ml_systems_lab.bandits.metrics import (
     average_reward,
     cumulative_regret,
     cumulative_reward,
+    mean_confidence_interval,
     optimal_action_rate,
 )
 
@@ -115,17 +116,27 @@ def run_comparison(
 
         regret = cumulative_regret(actions, probabilities)
         total_reward = cumulative_reward(rewards)
+        optimal_actions = actions == optimal_action
+        reward_mean, reward_lower, reward_upper = mean_confidence_interval(rewards)
+        optimal_mean, optimal_lower, optimal_upper = mean_confidence_interval(optimal_actions)
+        regret_mean, regret_lower, regret_upper = mean_confidence_interval(regret)
+        cumulative_reward_mean = np.mean(total_reward, axis=0)
 
         results[name] = {
             "average_reward": average_reward(rewards),
-            "cumulative_reward": np.mean(total_reward, axis=0),
+            "average_reward_lower": reward_lower,
+            "average_reward_upper": reward_upper,
+            "cumulative_reward": cumulative_reward_mean,
             "optimal_action_rate": optimal_action_rate(actions, optimal_action),
-            "cumulative_regret": np.mean(regret, axis=0),
+            "optimal_action_rate_lower": optimal_lower,
+            "optimal_action_rate_upper": optimal_upper,
+            "cumulative_regret": regret_mean,
+            "cumulative_regret_lower": regret_lower,
+            "cumulative_regret_upper": regret_upper,
             "final_average_reward": float(np.mean(rewards[:, -100:])),
             "final_cumulative_reward": float(np.mean(total_reward[:, -1])),
-            "final_optimal_action_rate": float(np.mean(actions[:, -100:] == optimal_action)),
+            "final_optimal_action_rate": float(np.mean(optimal_actions[:, -100:])),
             "final_cumulative_regret": float(np.mean(regret[:, -1])),
         }
 
     return results
-
