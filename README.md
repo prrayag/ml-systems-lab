@@ -20,6 +20,7 @@ The agent does not observe these probabilities directly. They are used by the en
 
 | Algorithm | Main idea |
 | --- | --- |
+| Random | Choose arms uniformly at random as a sanity baseline. |
 | Epsilon-greedy | Mostly choose the best estimated arm, sometimes explore randomly. |
 | Optimistic initial values | Start value estimates high so early greedy choices try different arms. |
 | UCB1 | Add an uncertainty bonus to arms with fewer samples. |
@@ -35,7 +36,7 @@ Default run:
 - fixed master seed
 - shaded bands show approximate 95% confidence intervals across runs
 
-The main comparison uses epsilon-greedy with `epsilon = 0.1`, optimistic initial values, UCB1, and Thompson Sampling.
+The main comparison uses a random baseline, epsilon-greedy with `epsilon = 0.1`, optimistic initial values, UCB1, and Thompson Sampling.
 
 A smaller comparison also runs epsilon-greedy with `epsilon = 0.01`, `0.1`, and `0.2`.
 
@@ -49,10 +50,13 @@ Results below come from:
 
 | Algorithm | Final avg reward | Final optimal action rate | Final cumulative regret |
 | --- | ---: | ---: | ---: |
-| Epsilon-greedy (0.1) | 0.7706 | 0.9194 | 101.5830 [96.2261, 106.9399] |
-| Optimistic values | 0.7059 | 0.7150 | 171.8568 [129.1014, 214.6121] |
-| UCB1 | 0.7639 | 0.8670 | 163.4660 [161.4899, 165.4421] |
-| Thompson Sampling | 0.8023 | 0.9947 | 21.7337 [20.6283, 22.8392] |
+| Random | 0.4682 | 0.1984 | 678.5798 [677.0837, 680.0758] |
+| Epsilon-greedy (0.1) | 0.7608 | 0.9194 | 97.3530 [93.2104, 101.4956] |
+| Optimistic values | 0.7188 | 0.7150 | 171.3358 [128.3177, 214.3538] |
+| UCB1 | 0.7677 | 0.8746 | 165.7815 [163.7622, 167.8008] |
+| Thompson Sampling | 0.7965 | 0.9944 | 20.8390 [19.5595, 22.1185] |
+
+Raw summaries are saved as `results/bandits/summary.json` and `results/bandits/summary.csv`.
 
 ![Average reward](results/bandits/average_reward.png)
 
@@ -70,6 +74,7 @@ Results below come from:
 python3 -m venv .venv
 .venv/bin/python -m pip install -e ".[dev]"
 .venv/bin/python scripts/run_bandits.py
+.venv/bin/python scripts/check_bandit_results.py
 ```
 
 Useful options:
@@ -86,7 +91,12 @@ Useful options:
 
 ## Notes
 
+Short implementation notes are in [docs/bandits.md](docs/bandits.md).
+
+## Observations
+
 - Thompson Sampling performs best in this setup because it quickly concentrates probability mass on the best arm while still exploring uncertain arms.
+- The random baseline confirms that the learning strategies are improving action quality rather than only collecting noisy reward.
 - Epsilon-greedy with `epsilon = 0.01` has lower final regret slope but often learns too slowly early on.
 - Optimistic initial values are more variable here, which shows up in the wider regret interval.
 - Regret is calculated from expected arm rewards, not sampled rewards, so it measures action quality rather than reward noise.
