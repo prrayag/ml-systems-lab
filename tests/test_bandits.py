@@ -259,6 +259,8 @@ def test_run_comparison_returns_expected_shapes():
         "average_reward_lower",
         "average_reward_upper",
         "cumulative_reward",
+        "cumulative_reward_lower",
+        "cumulative_reward_upper",
         "optimal_action_rate",
         "optimal_action_rate_lower",
         "optimal_action_rate_upper",
@@ -269,6 +271,8 @@ def test_run_comparison_returns_expected_shapes():
         "final_average_reward_lower",
         "final_average_reward_upper",
         "final_cumulative_reward",
+        "final_cumulative_reward_lower",
+        "final_cumulative_reward_upper",
         "final_optimal_action_rate",
         "final_optimal_action_rate_lower",
         "final_optimal_action_rate_upper",
@@ -278,6 +282,7 @@ def test_run_comparison_returns_expected_shapes():
     }
     assert results["epsilon"]["average_reward"].shape == (12,)
     assert results["epsilon"]["average_reward_lower"].shape == (12,)
+    assert results["epsilon"]["cumulative_reward_upper"].shape == (12,)
     assert results["epsilon"]["cumulative_regret"].shape == (12,)
     assert results["epsilon"]["cumulative_regret_upper"].shape == (12,)
 

@@ -137,18 +137,25 @@ def run_comparison(
         reward_mean, reward_lower, reward_upper = mean_confidence_interval(rewards)
         optimal_mean, optimal_lower, optimal_upper = mean_confidence_interval(optimal_actions)
         regret_mean, regret_lower, regret_upper = mean_confidence_interval(regret)
-        cumulative_reward_mean = np.mean(total_reward, axis=0)
+        cumulative_reward_mean, cumulative_reward_lower, cumulative_reward_upper = (
+            mean_confidence_interval(total_reward)
+        )
         final_reward = np.mean(rewards[:, -100:], axis=1)
         final_optimal = np.mean(optimal_actions[:, -100:], axis=1)
         reward_value, reward_final_lower, reward_final_upper = _scalar_interval(final_reward)
         optimal_value, optimal_final_lower, optimal_final_upper = _scalar_interval(final_optimal)
         regret_value, regret_final_lower, regret_final_upper = _scalar_interval(regret[:, -1])
+        cumulative_value, cumulative_final_lower, cumulative_final_upper = _scalar_interval(
+            total_reward[:, -1]
+        )
 
         results[name] = {
             "average_reward": average_reward(rewards),
             "average_reward_lower": reward_lower,
             "average_reward_upper": reward_upper,
             "cumulative_reward": cumulative_reward_mean,
+            "cumulative_reward_lower": cumulative_reward_lower,
+            "cumulative_reward_upper": cumulative_reward_upper,
             "optimal_action_rate": optimal_action_rate(actions, optimal_action),
             "optimal_action_rate_lower": optimal_lower,
             "optimal_action_rate_upper": optimal_upper,
@@ -158,7 +165,9 @@ def run_comparison(
             "final_average_reward": reward_value,
             "final_average_reward_lower": reward_final_lower,
             "final_average_reward_upper": reward_final_upper,
-            "final_cumulative_reward": float(np.mean(total_reward[:, -1])),
+            "final_cumulative_reward": cumulative_value,
+            "final_cumulative_reward_lower": cumulative_final_lower,
+            "final_cumulative_reward_upper": cumulative_final_upper,
             "final_optimal_action_rate": optimal_value,
             "final_optimal_action_rate_lower": optimal_final_lower,
             "final_optimal_action_rate_upper": optimal_final_upper,
