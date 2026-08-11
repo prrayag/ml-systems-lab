@@ -49,6 +49,28 @@ class EpsilonGreedyAgent(BanditAgent):
         self.values[action] += step_size * (reward - self.values[action])
 
 
+class RandomAgent(BanditAgent):
+    """Uniform random action selection."""
+
+    def __init__(self, n_arms: int, seed: int | None = None):
+        if n_arms <= 0:
+            raise ValueError("n_arms must be positive")
+
+        self.n_arms = n_arms
+        self.seed = seed
+        self.rng = np.random.default_rng(seed)
+
+    def reset(self) -> None:
+        self.rng = np.random.default_rng(self.seed)
+
+    def select_action(self) -> int:
+        return int(self.rng.integers(self.n_arms))
+
+    def update(self, action: int, reward: int) -> None:
+        if action < 0 or action >= self.n_arms:
+            raise ValueError(f"invalid action {action}")
+
+
 class OptimisticInitialValuesAgent(BanditAgent):
     """Greedy agent initialized with optimistic value estimates."""
 

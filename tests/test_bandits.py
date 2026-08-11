@@ -4,6 +4,7 @@ import pytest
 from ml_systems_lab.bandits.agents import (
     EpsilonGreedyAgent,
     OptimisticInitialValuesAgent,
+    RandomAgent,
     ThompsonSamplingAgent,
     UCBAgent,
 )
@@ -94,6 +95,22 @@ def test_epsilon_one_explores_with_seeded_rng():
 
     assert first_actions == second_actions
     assert len(set(first_actions)) > 1
+
+
+def test_random_agent_reproducible_with_fixed_seed():
+    first = RandomAgent(n_arms=5, seed=13)
+    second = RandomAgent(n_arms=5, seed=13)
+
+    assert [first.select_action() for _ in range(12)] == [
+        second.select_action() for _ in range(12)
+    ]
+
+
+def test_random_agent_selects_valid_actions():
+    agent = RandomAgent(n_arms=3, seed=17)
+    actions = [agent.select_action() for _ in range(50)]
+
+    assert all(0 <= action < 3 for action in actions)
 
 
 def test_optimistic_agent_starts_with_configured_values():

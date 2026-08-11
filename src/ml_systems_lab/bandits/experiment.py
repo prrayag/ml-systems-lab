@@ -8,6 +8,7 @@ from ml_systems_lab.bandits.agents import (
     BanditAgent,
     EpsilonGreedyAgent,
     OptimisticInitialValuesAgent,
+    RandomAgent,
     ThompsonSamplingAgent,
     UCBAgent,
 )
@@ -33,6 +34,7 @@ def _scalar_interval(values: np.ndarray) -> tuple[float, float, float]:
 
 def standard_agents() -> dict[str, AgentFactory]:
     return {
+        "random": lambda n_arms, seed: RandomAgent(n_arms=n_arms, seed=seed),
         "epsilon-greedy (0.1)": lambda n_arms, seed: EpsilonGreedyAgent(
             n_arms=n_arms,
             epsilon=0.1,
