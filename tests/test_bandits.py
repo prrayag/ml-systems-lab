@@ -306,3 +306,17 @@ def test_run_comparison_reproducible_with_same_seed():
         first["epsilon"]["cumulative_regret"],
         second["epsilon"]["cumulative_regret"],
     )
+
+
+def test_run_comparison_rejects_invalid_steps_and_runs():
+    with pytest.raises(ValueError):
+        run_comparison(standard_agents(), steps=0, runs=2)
+    with pytest.raises(ValueError):
+        run_comparison(standard_agents(), steps=2, runs=0)
+
+
+def test_run_comparison_rejects_invalid_probabilities():
+    with pytest.raises(ValueError):
+        run_comparison(standard_agents(), probabilities=[], steps=2, runs=2)
+    with pytest.raises(ValueError):
+        run_comparison(standard_agents(), probabilities=[0.2, 1.2], steps=2, runs=2)

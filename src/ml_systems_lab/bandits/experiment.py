@@ -32,6 +32,14 @@ def _scalar_interval(values: np.ndarray) -> tuple[float, float, float]:
     return float(mean[0]), float(lower[0]), float(upper[0])
 
 
+def _validate_probabilities(probabilities: np.ndarray) -> np.ndarray:
+    if probabilities.ndim != 1 or len(probabilities) == 0:
+        raise ValueError("probabilities must be a non-empty 1D array")
+    if np.any((probabilities < 0.0) | (probabilities > 1.0)):
+        raise ValueError("probabilities must be between 0 and 1")
+    return probabilities
+
+
 def standard_agents() -> dict[str, AgentFactory]:
     return {
         "random": lambda n_arms, seed: RandomAgent(n_arms=n_arms, seed=seed),
@@ -99,9 +107,11 @@ def run_comparison(
     if runs <= 0:
         raise ValueError("runs must be positive")
 
-    probabilities = np.asarray(
-        DEFAULT_PROBABILITIES if probabilities is None else probabilities,
-        dtype=float,
+    probabilities = _validate_probabilities(
+        np.asarray(
+            DEFAULT_PROBABILITIES if probabilities is None else probabilities,
+            dtype=float,
+        )
     )
     n_arms = len(probabilities)
     optimal_action = int(np.argmax(probabilities))
