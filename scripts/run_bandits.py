@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import os
 import sys
@@ -76,6 +77,35 @@ def summarize(results: dict) -> dict[str, dict[str, float]]:
     }
 
 
+def write_summary_csv(summary: dict, output_path: Path) -> None:
+    fields = [
+        "experiment",
+        "algorithm",
+        "final_average_reward",
+        "final_average_reward_lower",
+        "final_average_reward_upper",
+        "final_cumulative_reward",
+        "final_optimal_action_rate",
+        "final_optimal_action_rate_lower",
+        "final_optimal_action_rate_upper",
+        "final_cumulative_regret",
+        "final_cumulative_regret_lower",
+        "final_cumulative_regret_upper",
+    ]
+    with output_path.open("w", newline="") as file:
+        writer = csv.DictWriter(file, fieldnames=fields)
+        writer.writeheader()
+        for experiment in ("standard_comparison", "epsilon_comparison"):
+            for algorithm, values in summary[experiment].items():
+                writer.writerow(
+                    {
+                        "experiment": experiment,
+                        "algorithm": algorithm,
+                        **values,
+                    }
+                )
+
+
 def main() -> None:
     args = parse_args()
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -140,6 +170,7 @@ def main() -> None:
         "epsilon_comparison": summarize(epsilon),
     }
     (RESULTS_DIR / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
+    write_summary_csv(summary, RESULTS_DIR / "summary.csv")
 
     print(f"saved results to {RESULTS_DIR.relative_to(ROOT)}")
     for name, values in summary["standard_comparison"].items():
