@@ -1,0 +1,20 @@
+{
+  "episodes": 500,
+  "runs": 50,
+  "max_steps": 50,
+  "seed": 7,
+  "algorithms": {
+    "q-learning": {
+      "final_return": 0.9434,
+      "final_success_rate": 1.0,
+      "eval_success_rate": 1.0,
+      "eval_average_steps": 6.0
+    },
+    "sarsa": {
+      "final_return": 0.9432,
+      "final_success_rate": 1.0,
+      "eval_success_rate": 1.0,
+      "eval_average_steps": 6.0
+    }
+  }
+}

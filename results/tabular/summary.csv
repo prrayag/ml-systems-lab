@@ -1,0 +1,3 @@
+algorithm,final_return,final_success_rate,eval_success_rate,eval_average_steps
+q-learning,0.9434,1.0,1.0,6.0
+sarsa,0.9432,1.0,1.0,6.0
