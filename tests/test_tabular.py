@@ -1,5 +1,6 @@
 import pytest
 
+from ml_systems_lab.tabular.agents import QLearningAgent
 from ml_systems_lab.tabular.gridworld import DOWN, LEFT, RIGHT, UP, GridWorld
 
 
@@ -59,3 +60,49 @@ def test_gridworld_rejects_invalid_layout():
     with pytest.raises(ValueError):
         GridWorld(start=(0, 0), goal=(0, 1), walls={(0, 0)})
 
+
+def test_q_learning_update_uses_max_next_state_value():
+    agent = QLearningAgent(
+        n_states=3,
+        n_actions=2,
+        learning_rate=0.5,
+        discount=0.9,
+        epsilon=0.0,
+    )
+    agent.q_values[1] = [0.2, 0.8]
+
+    agent.update(state=0, action=1, reward=1.0, next_state=1, done=False)
+
+    assert agent.q_values[0, 1] == pytest.approx(0.86)
+
+
+def test_q_learning_terminal_update_uses_reward_only():
+    agent = QLearningAgent(n_states=3, n_actions=2, learning_rate=0.5, discount=0.9)
+    agent.q_values[1] = [10.0, 10.0]
+
+    agent.update(state=0, action=1, reward=1.0, next_state=1, done=True)
+
+    assert agent.q_values[0, 1] == pytest.approx(0.5)
+
+
+def test_q_learning_greedy_action_uses_largest_q_value():
+    agent = QLearningAgent(n_states=2, n_actions=3, epsilon=0.0, seed=5)
+    agent.q_values[0] = [0.1, 0.7, 0.2]
+
+    assert agent.select_action(0) == 1
+
+
+def test_q_learning_random_actions_reproducible_with_seed():
+    first = QLearningAgent(n_states=2, n_actions=4, epsilon=1.0, seed=19)
+    second = QLearningAgent(n_states=2, n_actions=4, epsilon=1.0, seed=19)
+
+    assert [first.select_action(0) for _ in range(10)] == [
+        second.select_action(0) for _ in range(10)
+    ]
+
+
+def test_q_learning_rejects_invalid_parameters():
+    with pytest.raises(ValueError):
+        QLearningAgent(n_states=0, n_actions=2)
+    with pytest.raises(ValueError):
+        QLearningAgent(n_states=2, n_actions=2, discount=1.1)
