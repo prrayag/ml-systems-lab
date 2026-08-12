@@ -17,6 +17,7 @@ import matplotlib.pyplot as plt
 sys.path.insert(0, str(ROOT / "src"))
 
 from ml_systems_lab.tabular.experiment import run_tabular_comparison  # noqa: E402
+from ml_systems_lab.tabular.gridworld import default_gridworld  # noqa: E402
 
 
 RESULTS_DIR = ROOT / "results" / "tabular"
@@ -81,6 +82,7 @@ def write_summary_csv(summary: dict, output_path: Path) -> None:
 def main() -> None:
     args = parse_args()
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    (RESULTS_DIR / "gridworld.txt").write_text(default_gridworld().render() + "\n")
 
     results = run_tabular_comparison(
         episodes=args.episodes,
@@ -123,4 +125,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

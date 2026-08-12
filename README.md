@@ -141,7 +141,7 @@ Results below come from:
 
 ![Gridworld success rate](results/tabular/success_rate.png)
 
-Raw summaries are saved as `results/tabular/summary.json` and `results/tabular/summary.csv`.
+Raw summaries are saved as `results/tabular/summary.json` and `results/tabular/summary.csv`. The Gridworld layout is saved in `results/tabular/gridworld.txt`.
 
 Short implementation notes are in [docs/tabular_rl.md](docs/tabular_rl.md).
 

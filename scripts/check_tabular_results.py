@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 RESULTS_DIR = ROOT / "results" / "tabular"
 
 EXPECTED_FILES = [
+    "gridworld.txt",
     "return.png",
     "success_rate.png",
     "summary.json",
@@ -37,4 +38,3 @@ if __name__ == "__main__":
     except KeyError as error:
         print(f"missing summary field: {error}", file=sys.stderr)
         raise SystemExit(1)
-
