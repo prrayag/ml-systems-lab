@@ -2,7 +2,7 @@
 
 Small implementations and experiments for understanding machine learning and reinforcement learning systems from first principles.
 
-The current module compares exploration strategies for stochastic multi-armed bandits.
+The current module compares exploration strategies for stochastic multi-armed bandits and tabular control methods on a small Gridworld.
 
 ## Multi-Armed Bandits
 
@@ -75,6 +75,8 @@ python3 -m venv .venv
 .venv/bin/python -m pip install -e ".[dev]"
 .venv/bin/python scripts/run_bandits.py
 .venv/bin/python scripts/check_bandit_results.py
+.venv/bin/python scripts/run_tabular_rl.py
+.venv/bin/python scripts/check_tabular_results.py
 ```
 
 Useful options:
@@ -101,6 +103,48 @@ Short implementation notes are in [docs/bandits.md](docs/bandits.md).
 - Optimistic initial values are more variable here, which shows up in the wider regret interval.
 - Regret is calculated from expected arm rewards, not sampled rewards, so it measures action quality rather than reward noise.
 
+## Tabular RL
+
+The tabular module uses a deterministic Gridworld to compare Q-learning and SARSA.
+
+Q-learning updates toward the best next action:
+
+```text
+reward + discount * max_a Q(next_state, a)
+```
+
+SARSA updates toward the next action selected by the current policy:
+
+```text
+reward + discount * Q(next_state, next_action)
+```
+
+Default run:
+
+- 500 episodes
+- 50 independent runs
+- 50 max steps per episode
+- fixed master seed
+
+Results below come from:
+
+```bash
+.venv/bin/python scripts/run_tabular_rl.py
+```
+
+| Algorithm | Final return | Final success rate | Greedy eval success | Greedy eval steps |
+| --- | ---: | ---: | ---: | ---: |
+| Q-learning | 0.9434 | 1.0000 | 1.0000 | 6.0000 |
+| SARSA | 0.9432 | 1.0000 | 1.0000 | 6.0000 |
+
+![Gridworld return](results/tabular/return.png)
+
+![Gridworld success rate](results/tabular/success_rate.png)
+
+Raw summaries are saved as `results/tabular/summary.json` and `results/tabular/summary.csv`.
+
+Short implementation notes are in [docs/tabular_rl.md](docs/tabular_rl.md).
+
 ## Next
 
-Value-based reinforcement learning will be added later, starting with small tabular environments.
+The next milestone is Deep Q-Networks on a small environment.
