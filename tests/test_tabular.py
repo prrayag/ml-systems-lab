@@ -1,7 +1,9 @@
+import numpy as np
 import pytest
 
 from ml_systems_lab.tabular.agents import QLearningAgent, SarsaAgent
 from ml_systems_lab.tabular.gridworld import DOWN, LEFT, RIGHT, UP, GridWorld
+from ml_systems_lab.tabular.experiment import moving_average, run_tabular_comparison
 from ml_systems_lab.tabular.train import (
     evaluate_greedy_policy,
     train_q_learning,
@@ -196,3 +198,40 @@ def test_q_learning_learns_short_gridworld_path():
 
     assert evaluation["success_rate"] == pytest.approx(1.0)
     assert evaluation["average_steps"] <= 3
+
+
+def test_moving_average_uses_available_prefix():
+    values = np.array([1.0, 3.0, 5.0, 7.0])
+
+    np.testing.assert_allclose(
+        moving_average(values, window=3),
+        np.array([1.0, 2.0, 3.0, 5.0]),
+    )
+
+
+def test_run_tabular_comparison_returns_expected_shapes():
+    results = run_tabular_comparison(episodes=20, runs=3, max_steps=20, seed=5)
+
+    assert set(results) == {"q-learning", "sarsa"}
+    assert results["q-learning"]["return"].shape == (20,)
+    assert results["q-learning"]["success_rate"].shape == (20,)
+    assert 0.0 <= results["q-learning"]["eval_success_rate"] <= 1.0
+
+
+def test_run_tabular_comparison_reproducible_with_same_seed():
+    first = run_tabular_comparison(episodes=20, runs=3, max_steps=20, seed=9)
+    second = run_tabular_comparison(episodes=20, runs=3, max_steps=20, seed=9)
+
+    np.testing.assert_allclose(first["sarsa"]["return"], second["sarsa"]["return"])
+    assert first["q-learning"]["eval_success_rate"] == pytest.approx(
+        second["q-learning"]["eval_success_rate"]
+    )
+
+
+def test_run_tabular_comparison_rejects_invalid_inputs():
+    with pytest.raises(ValueError):
+        run_tabular_comparison(episodes=0)
+    with pytest.raises(ValueError):
+        run_tabular_comparison(runs=0)
+    with pytest.raises(ValueError):
+        run_tabular_comparison(max_steps=0)
