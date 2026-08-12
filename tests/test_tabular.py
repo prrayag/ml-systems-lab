@@ -2,6 +2,11 @@ import pytest
 
 from ml_systems_lab.tabular.agents import QLearningAgent, SarsaAgent
 from ml_systems_lab.tabular.gridworld import DOWN, LEFT, RIGHT, UP, GridWorld
+from ml_systems_lab.tabular.train import (
+    evaluate_greedy_policy,
+    train_q_learning,
+    train_sarsa,
+)
 
 
 def test_gridworld_reset_returns_start_state():
@@ -151,3 +156,43 @@ def test_sarsa_select_action_uses_epsilon_greedy_policy():
     agent.q_values[0] = [0.2, 0.1, 0.8]
 
     assert agent.select_action(0) == 2
+
+
+def test_train_q_learning_returns_episode_history():
+    env = GridWorld(rows=2, cols=2, goal=(1, 1))
+    agent = QLearningAgent(env.n_states, env.n_actions, epsilon=0.2, seed=3)
+
+    history = train_q_learning(env, agent, episodes=5, max_steps=10)
+
+    assert history["returns"].shape == (5,)
+    assert history["lengths"].shape == (5,)
+    assert history["successes"].shape == (5,)
+
+
+def test_train_sarsa_returns_episode_history():
+    env = GridWorld(rows=2, cols=2, goal=(1, 1))
+    agent = SarsaAgent(env.n_states, env.n_actions, epsilon=0.2, seed=3)
+
+    history = train_sarsa(env, agent, episodes=5, max_steps=10)
+
+    assert history["returns"].shape == (5,)
+    assert history["lengths"].shape == (5,)
+    assert history["successes"].shape == (5,)
+
+
+def test_q_learning_learns_short_gridworld_path():
+    env = GridWorld(rows=2, cols=2, goal=(1, 1))
+    agent = QLearningAgent(
+        env.n_states,
+        env.n_actions,
+        learning_rate=0.4,
+        discount=0.95,
+        epsilon=0.2,
+        seed=11,
+    )
+
+    train_q_learning(env, agent, episodes=120, max_steps=10)
+    evaluation = evaluate_greedy_policy(env, agent, episodes=5, max_steps=10)
+
+    assert evaluation["success_rate"] == pytest.approx(1.0)
+    assert evaluation["average_steps"] <= 3
