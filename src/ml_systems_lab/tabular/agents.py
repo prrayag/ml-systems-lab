@@ -3,9 +3,7 @@ from __future__ import annotations
 import numpy as np
 
 
-class QLearningAgent:
-    """Tabular Q-learning with epsilon-greedy action selection."""
-
+class EpsilonGreedyTabularAgent:
     def __init__(
         self,
         n_states: int,
@@ -44,6 +42,10 @@ class QLearningAgent:
             return int(self.rng.integers(self.n_actions))
         return int(np.argmax(self.q_values[state]))
 
+
+class QLearningAgent(EpsilonGreedyTabularAgent):
+    """Tabular Q-learning with epsilon-greedy action selection."""
+
     def update(
         self,
         state: int,
@@ -59,3 +61,22 @@ class QLearningAgent:
         error = target - self.q_values[state, action]
         self.q_values[state, action] += self.learning_rate * error
 
+
+class SarsaAgent(EpsilonGreedyTabularAgent):
+    """Tabular SARSA with epsilon-greedy action selection."""
+
+    def update(
+        self,
+        state: int,
+        action: int,
+        reward: float,
+        next_state: int,
+        next_action: int,
+        done: bool,
+    ) -> None:
+        target = reward
+        if not done:
+            target += self.discount * self.q_values[next_state, next_action]
+
+        error = target - self.q_values[state, action]
+        self.q_values[state, action] += self.learning_rate * error

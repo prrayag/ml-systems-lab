@@ -1,6 +1,6 @@
 import pytest
 
-from ml_systems_lab.tabular.agents import QLearningAgent
+from ml_systems_lab.tabular.agents import QLearningAgent, SarsaAgent
 from ml_systems_lab.tabular.gridworld import DOWN, LEFT, RIGHT, UP, GridWorld
 
 
@@ -106,3 +106,48 @@ def test_q_learning_rejects_invalid_parameters():
         QLearningAgent(n_states=0, n_actions=2)
     with pytest.raises(ValueError):
         QLearningAgent(n_states=2, n_actions=2, discount=1.1)
+
+
+def test_sarsa_update_uses_selected_next_action():
+    agent = SarsaAgent(
+        n_states=3,
+        n_actions=2,
+        learning_rate=0.5,
+        discount=0.9,
+        epsilon=0.0,
+    )
+    agent.q_values[1] = [0.2, 0.8]
+
+    agent.update(
+        state=0,
+        action=1,
+        reward=1.0,
+        next_state=1,
+        next_action=0,
+        done=False,
+    )
+
+    assert agent.q_values[0, 1] == pytest.approx(0.59)
+
+
+def test_sarsa_terminal_update_uses_reward_only():
+    agent = SarsaAgent(n_states=3, n_actions=2, learning_rate=0.5, discount=0.9)
+    agent.q_values[1] = [10.0, 10.0]
+
+    agent.update(
+        state=0,
+        action=1,
+        reward=1.0,
+        next_state=1,
+        next_action=0,
+        done=True,
+    )
+
+    assert agent.q_values[0, 1] == pytest.approx(0.5)
+
+
+def test_sarsa_select_action_uses_epsilon_greedy_policy():
+    agent = SarsaAgent(n_states=2, n_actions=3, epsilon=0.0)
+    agent.q_values[0] = [0.2, 0.1, 0.8]
+
+    assert agent.select_action(0) == 2
