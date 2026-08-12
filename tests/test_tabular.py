@@ -61,6 +61,12 @@ def test_gridworld_state_cell_roundtrip():
             assert env.to_cell(state) == (row, col)
 
 
+def test_gridworld_render_shows_layout():
+    env = GridWorld(rows=3, cols=3, start=(0, 0), goal=(2, 2), walls={(1, 1)})
+
+    assert env.render() == "S . .\n. # .\n. . G"
+
+
 def test_gridworld_rejects_invalid_layout():
     with pytest.raises(ValueError):
         GridWorld(rows=0)

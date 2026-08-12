@@ -80,6 +80,23 @@ class GridWorld:
             raise ValueError(f"invalid state {state}")
         return divmod(state, self.cols)
 
+    def render(self) -> str:
+        lines = []
+        for row in range(self.rows):
+            cells = []
+            for col in range(self.cols):
+                cell = (row, col)
+                if cell == self.start:
+                    cells.append("S")
+                elif cell == self.goal:
+                    cells.append("G")
+                elif cell in self.walls:
+                    cells.append("#")
+                else:
+                    cells.append(".")
+            lines.append(" ".join(cells))
+        return "\n".join(lines)
+
     def _move(self, cell: tuple[int, int], action: Action) -> tuple[int, int]:
         row, col = cell
         if action == UP:
@@ -101,4 +118,3 @@ class GridWorld:
 
 def default_gridworld() -> GridWorld:
     return GridWorld(walls={(1, 1), (2, 1)})
-
