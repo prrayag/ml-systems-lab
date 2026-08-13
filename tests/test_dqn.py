@@ -1,6 +1,8 @@
 import numpy as np
 import pytest
+import torch
 
+from ml_systems_lab.dqn.agent import DQNAgent, QNetwork
 from ml_systems_lab.dqn.replay import ReplayBuffer
 
 
@@ -45,3 +47,47 @@ def test_replay_buffer_rejects_invalid_sample_size():
     with pytest.raises(ValueError):
         buffer.sample(1)
 
+
+def test_q_network_output_shape():
+    network = QNetwork(state_dim=5, n_actions=3, hidden_dim=8)
+    states = torch.zeros((4, 5))
+
+    assert network(states).shape == (4, 3)
+
+
+def test_dqn_agent_one_hot_encodes_states():
+    agent = DQNAgent(state_dim=4, n_actions=2, seed=1)
+
+    np.testing.assert_allclose(agent.encode_state(2), np.array([0.0, 0.0, 1.0, 0.0]))
+
+
+def test_dqn_agent_random_actions_reproducible_with_seed():
+    first = DQNAgent(state_dim=4, n_actions=3, epsilon=1.0, seed=5)
+    second = DQNAgent(state_dim=4, n_actions=3, epsilon=1.0, seed=5)
+
+    assert [first.select_action(0) for _ in range(8)] == [
+        second.select_action(0) for _ in range(8)
+    ]
+
+
+def test_dqn_agent_syncs_target_network():
+    agent = DQNAgent(state_dim=4, n_actions=2, seed=7)
+
+    with torch.no_grad():
+        for parameter in agent.q_network.parameters():
+            parameter.add_(1.0)
+    agent.sync_target()
+
+    for q_param, target_param in zip(
+        agent.q_network.parameters(),
+        agent.target_network.parameters(),
+        strict=True,
+    ):
+        assert torch.allclose(q_param, target_param)
+
+
+def test_dqn_agent_rejects_invalid_state():
+    agent = DQNAgent(state_dim=4, n_actions=2)
+
+    with pytest.raises(ValueError):
+        agent.encode_state(4)
