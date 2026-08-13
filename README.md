@@ -77,6 +77,8 @@ python3 -m venv .venv
 .venv/bin/python scripts/check_bandit_results.py
 .venv/bin/python scripts/run_tabular_rl.py
 .venv/bin/python scripts/check_tabular_results.py
+.venv/bin/python scripts/run_dqn.py
+.venv/bin/python scripts/check_dqn_results.py
 ```
 
 Useful options:
@@ -145,6 +147,37 @@ Raw summaries are saved as `results/tabular/summary.json` and `results/tabular/s
 
 Short implementation notes are in [docs/tabular_rl.md](docs/tabular_rl.md).
 
+## Deep Q-Network
+
+The DQN module trains a small neural Q-network on the same Gridworld. States are one-hot vectors, and the network predicts one Q-value per action.
+
+The implementation includes:
+
+- experience replay
+- target network updates
+- epsilon-greedy action selection
+- Huber loss on bootstrapped Q-targets
+
+Results below come from:
+
+```bash
+.venv/bin/python scripts/run_dqn.py
+```
+
+| Algorithm | Episodes | Final success rate | Greedy eval success | Greedy eval steps |
+| --- | ---: | ---: | ---: | ---: |
+| DQN | 300 | 1.0000 | 1.0000 | 6.0000 |
+
+![DQN return](results/dqn/return.png)
+
+![DQN success rate](results/dqn/success_rate.png)
+
+![DQN loss](results/dqn/loss.png)
+
+Raw summaries are saved as `results/dqn/summary.json`. The Gridworld layout is saved in `results/dqn/gridworld.txt`.
+
+Short implementation notes are in [docs/dqn.md](docs/dqn.md).
+
 ## Next
 
-The next milestone is Deep Q-Networks on a small environment.
+The next milestone is policy gradients on a small environment.
