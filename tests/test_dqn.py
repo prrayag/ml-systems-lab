@@ -4,6 +4,8 @@ import torch
 
 from ml_systems_lab.dqn.agent import DQNAgent, QNetwork
 from ml_systems_lab.dqn.replay import ReplayBuffer
+from ml_systems_lab.dqn.train import run_dqn_training, train_dqn
+from ml_systems_lab.tabular.gridworld import GridWorld
 
 
 def test_replay_buffer_adds_transitions():
@@ -111,3 +113,31 @@ def test_dqn_train_on_batch_updates_network():
         not torch.allclose(old, new)
         for old, new in zip(before, agent.q_network.parameters(), strict=True)
     )
+
+
+def test_train_dqn_returns_episode_history():
+    env = GridWorld(rows=2, cols=2, goal=(1, 1))
+    agent = DQNAgent(env.n_states, env.n_actions, hidden_dim=8, epsilon=0.2, seed=13)
+
+    history = train_dqn(
+        env,
+        agent,
+        episodes=8,
+        max_steps=10,
+        batch_size=4,
+        min_replay_size=4,
+        target_update_interval=4,
+        seed=13,
+    )
+
+    assert history["returns"].shape == (8,)
+    assert history["lengths"].shape == (8,)
+    assert history["successes"].shape == (8,)
+    assert history["losses"].ndim == 1
+
+
+def test_run_dqn_training_learns_default_gridworld():
+    history, evaluation = run_dqn_training(episodes=300, max_steps=50, seed=23)
+
+    assert np.mean(history["successes"][-50:]) >= 0.9
+    assert evaluation["success_rate"] >= 0.9
