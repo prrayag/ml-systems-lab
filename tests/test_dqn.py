@@ -91,3 +91,23 @@ def test_dqn_agent_rejects_invalid_state():
 
     with pytest.raises(ValueError):
         agent.encode_state(4)
+
+
+def test_dqn_train_on_batch_updates_network():
+    agent = DQNAgent(state_dim=3, n_actions=2, hidden_dim=8, seed=11)
+    batch = {
+        "states": np.eye(3, dtype=np.float32),
+        "actions": np.array([0, 1, 0]),
+        "rewards": np.array([0.0, 1.0, 0.0], dtype=np.float32),
+        "next_states": np.eye(3, dtype=np.float32),
+        "dones": np.array([False, True, False]),
+    }
+    before = [parameter.detach().clone() for parameter in agent.q_network.parameters()]
+
+    loss = agent.train_on_batch(batch)
+
+    assert loss >= 0.0
+    assert any(
+        not torch.allclose(old, new)
+        for old, new in zip(before, agent.q_network.parameters(), strict=True)
+    )

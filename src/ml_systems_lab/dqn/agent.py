@@ -71,3 +71,20 @@ class DQNAgent:
     def sync_target(self) -> None:
         self.target_network.load_state_dict(self.q_network.state_dict())
 
+    def train_on_batch(self, batch: dict[str, np.ndarray]) -> float:
+        states = torch.as_tensor(batch["states"], dtype=torch.float32)
+        actions = torch.as_tensor(batch["actions"], dtype=torch.int64).unsqueeze(1)
+        rewards = torch.as_tensor(batch["rewards"], dtype=torch.float32)
+        next_states = torch.as_tensor(batch["next_states"], dtype=torch.float32)
+        dones = torch.as_tensor(batch["dones"], dtype=torch.float32)
+
+        q_values = self.q_network(states).gather(1, actions).squeeze(1)
+        with torch.no_grad():
+            next_values = self.target_network(next_states).max(dim=1).values
+            targets = rewards + self.discount * next_values * (1.0 - dones)
+
+        loss = self.loss_fn(q_values, targets)
+        self.optimizer.zero_grad()
+        loss.backward()
+        self.optimizer.step()
+        return float(loss.item())
