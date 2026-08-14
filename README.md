@@ -2,7 +2,7 @@
 
 Small implementations and experiments for understanding machine learning and reinforcement learning systems from first principles.
 
-The current module compares exploration strategies for stochastic multi-armed bandits and tabular control methods on a small Gridworld.
+The current modules compare exploration strategies for stochastic multi-armed bandits, tabular control methods, DQN, and REINFORCE on small environments.
 
 ## Multi-Armed Bandits
 
@@ -79,6 +79,8 @@ python3 -m venv .venv
 .venv/bin/python scripts/check_tabular_results.py
 .venv/bin/python scripts/run_dqn.py
 .venv/bin/python scripts/check_dqn_results.py
+.venv/bin/python scripts/run_policy_gradients.py
+.venv/bin/python scripts/check_policy_gradient_results.py
 ```
 
 Useful options:
@@ -178,6 +180,30 @@ Raw summaries are saved as `results/dqn/summary.json`. The Gridworld layout is s
 
 Short implementation notes are in [docs/dqn.md](docs/dqn.md).
 
+## Policy Gradients
+
+The policy-gradient module trains a small REINFORCE agent on Gridworld. The policy maps one-hot states to action probabilities and updates from complete episode returns.
+
+Results below come from:
+
+```bash
+.venv/bin/python scripts/run_policy_gradients.py
+```
+
+| Algorithm | Episodes | Final success rate | Greedy eval success | Greedy eval steps |
+| --- | ---: | ---: | ---: | ---: |
+| REINFORCE | 500 | 1.0000 | 1.0000 | 6.0000 |
+
+![REINFORCE return](results/policy_gradients/return.png)
+
+![REINFORCE success rate](results/policy_gradients/success_rate.png)
+
+![REINFORCE loss](results/policy_gradients/loss.png)
+
+Raw summaries are saved as `results/policy_gradients/summary.json`. The learned action probabilities are saved in `results/policy_gradients/policy.json`.
+
+Short implementation notes are in [docs/policy_gradients.md](docs/policy_gradients.md).
+
 ## Next
 
-The next milestone is policy gradients on a small environment.
+The next milestone is PPO-style clipped policy optimization after a short cleanup pass.
