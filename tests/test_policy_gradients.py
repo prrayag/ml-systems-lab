@@ -8,6 +8,12 @@ from ml_systems_lab.policy_gradients.reinforce import (
     normalize,
     reinforce_update,
 )
+from ml_systems_lab.policy_gradients.train import (
+    evaluate_policy,
+    run_reinforce_training,
+    train_reinforce,
+)
+from ml_systems_lab.tabular.gridworld import GridWorld
 
 
 def test_policy_network_output_shape():
@@ -67,3 +73,31 @@ def test_reinforce_update_changes_policy_parameters():
         not torch.allclose(old, new)
         for old, new in zip(before, agent.policy.parameters(), strict=True)
     )
+
+
+def test_train_reinforce_returns_episode_history():
+    env = GridWorld(rows=2, cols=2, goal=(1, 1))
+    agent = PolicyGradientAgent(env.n_states, env.n_actions, hidden_dim=8, seed=11)
+
+    history = train_reinforce(env, agent, episodes=8, max_steps=10)
+
+    assert history["returns"].shape == (8,)
+    assert history["lengths"].shape == (8,)
+    assert history["successes"].shape == (8,)
+    assert history["losses"].shape == (8,)
+
+
+def test_reinforce_learns_small_gridworld():
+    history, evaluation = run_reinforce_training(episodes=500, max_steps=50, seed=19)
+
+    assert np.mean(history["successes"][-50:]) >= 0.8
+    assert evaluation["success_rate"] >= 0.8
+
+
+def test_evaluate_policy_returns_metrics():
+    env = GridWorld(rows=2, cols=2, goal=(1, 1))
+    agent = PolicyGradientAgent(env.n_states, env.n_actions, hidden_dim=8, seed=3)
+
+    metrics = evaluate_policy(env, agent, episodes=2, max_steps=5)
+
+    assert set(metrics) == {"success_rate", "average_steps", "average_return"}
