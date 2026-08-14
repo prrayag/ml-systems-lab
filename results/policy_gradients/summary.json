@@ -1,0 +1,9 @@
+{
+  "episodes": 500,
+  "max_steps": 50,
+  "seed": 19,
+  "final_success_rate": 1.0,
+  "final_return": 0.9448,
+  "eval_success_rate": 1.0,
+  "eval_average_steps": 6.0
+}
