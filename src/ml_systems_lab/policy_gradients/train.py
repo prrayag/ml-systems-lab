@@ -84,6 +84,15 @@ def evaluate_policy(
     }
 
 
+def policy_action_probabilities(env: GridWorld, agent: PolicyGradientAgent) -> np.ndarray:
+    probabilities = np.zeros((env.n_states, env.n_actions), dtype=float)
+    for state in range(env.n_states):
+        with torch.no_grad():
+            distribution = agent.action_distribution(state)
+        probabilities[state] = distribution.probs.squeeze(0).numpy()
+    return probabilities
+
+
 def run_reinforce_training(
     episodes: int = 500,
     max_steps: int = 50,
@@ -102,4 +111,3 @@ def run_reinforce_training(
     history = train_reinforce(env, agent, episodes=episodes, max_steps=max_steps, discount=0.95)
     evaluation = evaluate_policy(env, agent, episodes=20, max_steps=max_steps)
     return history, evaluation
-

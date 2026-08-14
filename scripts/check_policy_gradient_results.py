@@ -13,6 +13,7 @@ EXPECTED_FILES = [
     "return.png",
     "success_rate.png",
     "loss.png",
+    "policy.json",
     "summary.json",
 ]
 
@@ -26,6 +27,10 @@ def main() -> None:
     if summary["eval_success_rate"] < 0.8:
         raise SystemExit("greedy REINFORCE evaluation did not solve the gridworld")
 
+    policy_rows = json.loads((RESULTS_DIR / "policy.json").read_text())
+    if len(policy_rows) != 16:
+        raise SystemExit("expected one policy row per gridworld state")
+
     print("policy-gradient results look complete")
 
 
@@ -35,4 +40,3 @@ if __name__ == "__main__":
     except KeyError as error:
         print(f"missing summary field: {error}", file=sys.stderr)
         raise SystemExit(1)
-

@@ -10,6 +10,7 @@ from ml_systems_lab.policy_gradients.reinforce import (
 )
 from ml_systems_lab.policy_gradients.train import (
     evaluate_policy,
+    policy_action_probabilities,
     run_reinforce_training,
     train_reinforce,
 )
@@ -101,3 +102,13 @@ def test_evaluate_policy_returns_metrics():
     metrics = evaluate_policy(env, agent, episodes=2, max_steps=5)
 
     assert set(metrics) == {"success_rate", "average_steps", "average_return"}
+
+
+def test_policy_action_probabilities_are_distributions():
+    env = GridWorld(rows=2, cols=2, goal=(1, 1))
+    agent = PolicyGradientAgent(env.n_states, env.n_actions, hidden_dim=8, seed=3)
+
+    probabilities = policy_action_probabilities(env, agent)
+
+    assert probabilities.shape == (env.n_states, env.n_actions)
+    np.testing.assert_allclose(probabilities.sum(axis=1), np.ones(env.n_states), atol=1e-6)
