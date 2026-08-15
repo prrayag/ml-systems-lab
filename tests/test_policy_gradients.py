@@ -8,6 +8,12 @@ from ml_systems_lab.policy_gradients.agent import (
     PolicyGradientAgent,
     PolicyNetwork,
 )
+from ml_systems_lab.policy_gradients.ppo import (
+    clipped_policy_loss,
+    collect_rollout,
+    discounted_returns_with_resets,
+    ppo_update,
+)
 from ml_systems_lab.policy_gradients.reinforce import (
     discounted_returns,
     normalize,
@@ -140,3 +146,53 @@ def test_policy_action_probabilities_are_distributions():
 
     assert probabilities.shape == (env.n_states, env.n_actions)
     np.testing.assert_allclose(probabilities.sum(axis=1), np.ones(env.n_states), atol=1e-6)
+
+
+def test_discounted_returns_reset_at_episode_boundaries():
+    returns = discounted_returns_with_resets(
+        rewards=np.array([1.0, 1.0, 1.0]),
+        dones=np.array([False, True, False]),
+        discount=0.9,
+    )
+
+    np.testing.assert_allclose(returns, np.array([1.9, 1.0, 1.0]), atol=1e-6)
+
+
+def test_clipped_policy_loss_limits_large_ratio():
+    loss = clipped_policy_loss(
+        new_log_probs=torch.log(torch.tensor([3.0])),
+        old_log_probs=torch.log(torch.tensor([1.0])),
+        advantages=torch.tensor([1.0]),
+        clip_range=0.2,
+    )
+
+    assert loss.item() == pytest.approx(-1.2)
+
+
+def test_collect_rollout_returns_training_batch():
+    env = GridWorld(rows=2, cols=2, goal=(1, 1))
+    agent = ActorCriticAgent(env.n_states, env.n_actions, hidden_dim=8, seed=4)
+
+    rollout = collect_rollout(env, agent, steps=12, max_episode_steps=6)
+
+    assert rollout["states"].shape == (12,)
+    assert rollout["actions"].shape == (12,)
+    assert rollout["old_log_probs"].shape == (12,)
+    assert rollout["values"].shape == (12,)
+    assert rollout["rewards"].shape == (12,)
+    assert rollout["dones"].shape == (12,)
+
+
+def test_ppo_update_changes_actor_critic_parameters():
+    env = GridWorld(rows=2, cols=2, goal=(1, 1))
+    agent = ActorCriticAgent(env.n_states, env.n_actions, hidden_dim=8, seed=8)
+    rollout = collect_rollout(env, agent, steps=16, max_episode_steps=8)
+    before = [parameter.detach().clone() for parameter in agent.model.parameters()]
+
+    metrics = ppo_update(agent, rollout, epochs=2)
+
+    assert set(metrics) == {"policy_loss", "value_loss", "entropy"}
+    assert any(
+        not torch.allclose(old, new)
+        for old, new in zip(before, agent.model.parameters(), strict=True)
+    )
