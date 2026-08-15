@@ -1,0 +1,162 @@
+[
+  {
+    "state": 0,
+    "greedy_action": "right",
+    "probabilities": {
+      "up": 0.0021,
+      "right": 0.9309,
+      "down": 0.0655,
+      "left": 0.0015
+    }
+  },
+  {
+    "state": 1,
+    "greedy_action": "right",
+    "probabilities": {
+      "up": 0.0006,
+      "right": 0.9939,
+      "down": 0.0052,
+      "left": 0.0004
+    }
+  },
+  {
+    "state": 2,
+    "greedy_action": "down",
+    "probabilities": {
+      "up": 0.0008,
+      "right": 0.0712,
+      "down": 0.9273,
+      "left": 0.0007
+    }
+  },
+  {
+    "state": 3,
+    "greedy_action": "down",
+    "probabilities": {
+      "up": 0.0003,
+      "right": 0.0106,
+      "down": 0.9887,
+      "left": 0.0004
+    }
+  },
+  {
+    "state": 4,
+    "greedy_action": "down",
+    "probabilities": {
+      "up": 0.0004,
+      "right": 0.0153,
+      "down": 0.9839,
+      "left": 0.0004
+    }
+  },
+  {
+    "state": 5,
+    "greedy_action": "right",
+    "probabilities": {
+      "up": 0.0071,
+      "right": 0.6282,
+      "down": 0.3594,
+      "left": 0.0053
+    }
+  },
+  {
+    "state": 6,
+    "greedy_action": "down",
+    "probabilities": {
+      "up": 0.0012,
+      "right": 0.1247,
+      "down": 0.8728,
+      "left": 0.0012
+    }
+  },
+  {
+    "state": 7,
+    "greedy_action": "down",
+    "probabilities": {
+      "up": 0.0001,
+      "right": 0.0015,
+      "down": 0.9983,
+      "left": 0.0001
+    }
+  },
+  {
+    "state": 8,
+    "greedy_action": "down",
+    "probabilities": {
+      "up": 0.0005,
+      "right": 0.0165,
+      "down": 0.9824,
+      "left": 0.0006
+    }
+  },
+  {
+    "state": 9,
+    "greedy_action": "down",
+    "probabilities": {
+      "up": 0.0133,
+      "right": 0.4094,
+      "down": 0.565,
+      "left": 0.0124
+    }
+  },
+  {
+    "state": 10,
+    "greedy_action": "down",
+    "probabilities": {
+      "up": 0.0011,
+      "right": 0.3595,
+      "down": 0.6385,
+      "left": 0.0009
+    }
+  },
+  {
+    "state": 11,
+    "greedy_action": "down",
+    "probabilities": {
+      "up": 0.0,
+      "right": 0.0033,
+      "down": 0.9966,
+      "left": 0.0
+    }
+  },
+  {
+    "state": 12,
+    "greedy_action": "right",
+    "probabilities": {
+      "up": 0.0006,
+      "right": 0.9797,
+      "down": 0.0193,
+      "left": 0.0004
+    }
+  },
+  {
+    "state": 13,
+    "greedy_action": "right",
+    "probabilities": {
+      "up": 0.0009,
+      "right": 0.9687,
+      "down": 0.0298,
+      "left": 0.0006
+    }
+  },
+  {
+    "state": 14,
+    "greedy_action": "right",
+    "probabilities": {
+      "up": 0.0003,
+      "right": 0.986,
+      "down": 0.0134,
+      "left": 0.0002
+    }
+  },
+  {
+    "state": 15,
+    "greedy_action": "right",
+    "probabilities": {
+      "up": 0.0047,
+      "right": 0.6364,
+      "down": 0.3546,
+      "left": 0.0042
+    }
+  }
+]
