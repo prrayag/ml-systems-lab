@@ -3,7 +3,8 @@ from __future__ import annotations
 import numpy as np
 import torch
 
-from ml_systems_lab.policy_gradients.agent import PolicyGradientAgent
+from ml_systems_lab.policy_gradients.agent import ActorCriticAgent, PolicyGradientAgent
+from ml_systems_lab.policy_gradients.ppo import collect_rollout, ppo_update
 from ml_systems_lab.policy_gradients.reinforce import reinforce_update
 from ml_systems_lab.tabular.gridworld import GridWorld, default_gridworld
 
@@ -111,3 +112,82 @@ def run_reinforce_training(
     history = train_reinforce(env, agent, episodes=episodes, max_steps=max_steps, discount=0.95)
     evaluation = evaluate_policy(env, agent, episodes=20, max_steps=max_steps)
     return history, evaluation
+
+
+def train_ppo(
+    env: GridWorld,
+    agent: ActorCriticAgent,
+    updates: int = 80,
+    rollout_steps: int = 128,
+    max_steps: int = 50,
+    discount: float = 0.95,
+    clip_range: float = 0.2,
+    epochs: int = 4,
+) -> dict[str, np.ndarray]:
+    if updates <= 0 or rollout_steps <= 0 or max_steps <= 0:
+        raise ValueError("updates, rollout_steps, and max_steps must be positive")
+
+    returns = np.zeros(updates, dtype=float)
+    lengths = np.zeros(updates, dtype=float)
+    successes = np.zeros(updates, dtype=float)
+    policy_losses = np.zeros(updates, dtype=float)
+    value_losses = np.zeros(updates, dtype=float)
+    entropies = np.zeros(updates, dtype=float)
+
+    for update in range(updates):
+        rollout = collect_rollout(env, agent, steps=rollout_steps, max_episode_steps=max_steps)
+        metrics = ppo_update(
+            agent,
+            rollout,
+            discount=discount,
+            clip_range=clip_range,
+            epochs=epochs,
+        )
+
+        if len(rollout["episode_returns"]) > 0:
+            returns[update] = float(np.mean(rollout["episode_returns"]))
+            lengths[update] = float(np.mean(rollout["episode_lengths"]))
+            successes[update] = float(np.mean(rollout["episode_successes"]))
+
+        policy_losses[update] = metrics["policy_loss"]
+        value_losses[update] = metrics["value_loss"]
+        entropies[update] = metrics["entropy"]
+
+    return {
+        "returns": returns,
+        "lengths": lengths,
+        "successes": successes,
+        "policy_losses": policy_losses,
+        "value_losses": value_losses,
+        "entropies": entropies,
+    }
+
+
+def run_ppo_training(
+    updates: int = 80,
+    rollout_steps: int = 128,
+    max_steps: int = 50,
+    seed: int = 23,
+) -> tuple[dict[str, np.ndarray], dict[str, float], ActorCriticAgent]:
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    env = default_gridworld()
+    agent = ActorCriticAgent(
+        state_dim=env.n_states,
+        n_actions=env.n_actions,
+        hidden_dim=32,
+        learning_rate=3e-3,
+        seed=seed,
+    )
+    history = train_ppo(
+        env,
+        agent,
+        updates=updates,
+        rollout_steps=rollout_steps,
+        max_steps=max_steps,
+        discount=0.95,
+        clip_range=0.2,
+        epochs=4,
+    )
+    evaluation = evaluate_policy(env, agent, episodes=20, max_steps=max_steps)
+    return history, evaluation, agent

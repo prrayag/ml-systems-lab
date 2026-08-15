@@ -22,7 +22,9 @@ from ml_systems_lab.policy_gradients.reinforce import (
 from ml_systems_lab.policy_gradients.train import (
     evaluate_policy,
     policy_action_probabilities,
+    run_ppo_training,
     run_reinforce_training,
+    train_ppo,
     train_reinforce,
 )
 from ml_systems_lab.tabular.gridworld import GridWorld
@@ -196,3 +198,23 @@ def test_ppo_update_changes_actor_critic_parameters():
         not torch.allclose(old, new)
         for old, new in zip(before, agent.model.parameters(), strict=True)
     )
+
+
+def test_train_ppo_returns_update_history():
+    env = GridWorld(rows=2, cols=2, goal=(1, 1))
+    agent = ActorCriticAgent(env.n_states, env.n_actions, hidden_dim=8, seed=12)
+
+    history = train_ppo(env, agent, updates=3, rollout_steps=16, max_steps=8, epochs=2)
+
+    assert history["returns"].shape == (3,)
+    assert history["successes"].shape == (3,)
+    assert history["policy_losses"].shape == (3,)
+    assert history["value_losses"].shape == (3,)
+    assert history["entropies"].shape == (3,)
+
+
+def test_ppo_learns_small_gridworld():
+    history, evaluation, _ = run_ppo_training(updates=80, rollout_steps=128, max_steps=50, seed=23)
+
+    assert np.mean(history["successes"][-10:]) >= 0.8
+    assert evaluation["success_rate"] >= 0.8
