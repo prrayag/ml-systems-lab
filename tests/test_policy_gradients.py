@@ -2,7 +2,12 @@ import numpy as np
 import pytest
 import torch
 
-from ml_systems_lab.policy_gradients.agent import PolicyGradientAgent, PolicyNetwork
+from ml_systems_lab.policy_gradients.agent import (
+    ActorCriticAgent,
+    ActorCriticNetwork,
+    PolicyGradientAgent,
+    PolicyNetwork,
+)
 from ml_systems_lab.policy_gradients.reinforce import (
     discounted_returns,
     normalize,
@@ -22,6 +27,16 @@ def test_policy_network_output_shape():
     states = torch.zeros((3, 5))
 
     assert network(states).shape == (3, 4)
+
+
+def test_actor_critic_network_output_shapes():
+    network = ActorCriticNetwork(state_dim=5, n_actions=4, hidden_dim=8)
+    states = torch.zeros((3, 5))
+
+    logits, values = network(states)
+
+    assert logits.shape == (3, 4)
+    assert values.shape == (3,)
 
 
 def test_policy_agent_one_hot_encodes_states():
@@ -44,6 +59,19 @@ def test_policy_agent_rejects_invalid_state():
 
     with pytest.raises(ValueError):
         agent.encode_state(4)
+
+
+def test_actor_critic_agent_evaluates_actions():
+    agent = ActorCriticAgent(state_dim=4, n_actions=3, hidden_dim=8, seed=3)
+
+    log_probs, entropy, values = agent.evaluate_actions(
+        states=np.array([0, 1, 2]),
+        actions=np.array([0, 1, 2]),
+    )
+
+    assert log_probs.shape == (3,)
+    assert entropy.shape == (3,)
+    assert values.shape == (3,)
 
 
 def test_discounted_returns_work_backward():
