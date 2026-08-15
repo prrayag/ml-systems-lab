@@ -2,7 +2,7 @@
 
 Small implementations and experiments for understanding machine learning and reinforcement learning systems from first principles.
 
-The current modules compare exploration strategies for stochastic multi-armed bandits, tabular control methods, DQN, and REINFORCE on small environments.
+The current modules compare exploration strategies for stochastic multi-armed bandits, tabular control methods, DQN, REINFORCE, and PPO on small environments.
 
 ## Multi-Armed Bandits
 
@@ -81,6 +81,8 @@ python3 -m venv .venv
 .venv/bin/python scripts/check_dqn_results.py
 .venv/bin/python scripts/run_policy_gradients.py
 .venv/bin/python scripts/check_policy_gradient_results.py
+.venv/bin/python scripts/run_ppo.py
+.venv/bin/python scripts/check_ppo_results.py
 ```
 
 Useful options:
@@ -204,6 +206,34 @@ Raw summaries are saved as `results/policy_gradients/summary.json`. The learned 
 
 Short implementation notes are in [docs/policy_gradients.md](docs/policy_gradients.md).
 
+## PPO
+
+The PPO module trains an actor-critic policy on Gridworld. It collects rollouts with the current policy, estimates advantages from discounted returns and value predictions, then applies the clipped PPO objective.
+
+Results below come from:
+
+```bash
+.venv/bin/python scripts/run_ppo.py
+```
+
+| Algorithm | Updates | Rollout steps | Final success rate | Greedy eval success | Greedy eval steps |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| PPO | 80 | 128 | 1.0000 | 1.0000 | 6.0000 |
+
+![PPO return](results/ppo/return.png)
+
+![PPO success rate](results/ppo/success_rate.png)
+
+![PPO policy loss](results/ppo/policy_loss.png)
+
+![PPO value loss](results/ppo/value_loss.png)
+
+![PPO entropy](results/ppo/entropy.png)
+
+Raw summaries are saved as `results/ppo/summary.json`. The learned action probabilities are saved in `results/ppo/policy.json`.
+
+Short implementation notes are in [docs/ppo.md](docs/ppo.md).
+
 ## Next
 
-The next milestone is PPO-style clipped policy optimization after a short cleanup pass.
+The next step is a cleanup pass across the RL modules before moving to a larger environment.
