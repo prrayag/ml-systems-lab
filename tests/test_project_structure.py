@@ -41,6 +41,7 @@ def test_expected_docs_exist():
         "ppo.md",
         "interview_guide.md",
         "reproducibility.md",
+        "final_review.md",
     ]
 
     for doc in docs:

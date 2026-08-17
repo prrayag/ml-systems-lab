@@ -14,7 +14,7 @@ The current modules compare exploration strategies for stochastic multi-armed ba
 | REINFORCE | Episode returns, stochastic policies, policy gradients |
 | PPO | Actor-critic learning, advantages, clipped policy updates |
 
-The aggregate result summary is in [results/summary.md](results/summary.md). A short interview checklist is in [docs/interview_guide.md](docs/interview_guide.md).
+The aggregate result summary is in [results/summary.md](results/summary.md). A short interview checklist is in [docs/interview_guide.md](docs/interview_guide.md), and the final scope review is in [docs/final_review.md](docs/final_review.md).
 
 ## Multi-Armed Bandits
 
