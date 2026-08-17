@@ -4,6 +4,18 @@ Small implementations and experiments for understanding machine learning and rei
 
 The current modules compare exploration strategies for stochastic multi-armed bandits, tabular control methods, DQN, REINFORCE, and PPO on small environments.
 
+## At A Glance
+
+| Module | What it demonstrates |
+| --- | --- |
+| Bandits | Exploration strategies, regret, repeated simulations |
+| Tabular RL | Bellman updates, Q-learning, SARSA |
+| DQN | Replay buffer, target network, neural Q-values |
+| REINFORCE | Episode returns, stochastic policies, policy gradients |
+| PPO | Actor-critic learning, advantages, clipped policy updates |
+
+The aggregate result summary is in [results/summary.md](results/summary.md). A short interview checklist is in [docs/interview_guide.md](docs/interview_guide.md).
+
 ## Multi-Armed Bandits
 
 A Bernoulli bandit has several arms, each with an unknown probability of returning reward `1`. The agent chooses one arm per step and tries to learn which arm has the highest expected reward.
@@ -83,6 +95,8 @@ python3 -m venv .venv
 .venv/bin/python scripts/check_policy_gradient_results.py
 .venv/bin/python scripts/run_ppo.py
 .venv/bin/python scripts/check_ppo_results.py
+.venv/bin/python scripts/check_all_results.py
+.venv/bin/python scripts/summarize_results.py
 ```
 
 Useful options:
