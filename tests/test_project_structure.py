@@ -23,6 +23,7 @@ def test_expected_scripts_exist():
         "run_dqn.py",
         "run_policy_gradients.py",
         "run_ppo.py",
+        "run_all_experiments.py",
         "check_all_results.py",
         "summarize_results.py",
     ]
