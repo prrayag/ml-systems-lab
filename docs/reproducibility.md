@@ -29,6 +29,12 @@ Regenerate the aggregate summary:
 .venv/bin/python scripts/summarize_results.py
 ```
 
+Rerun all experiments and checks:
+
+```bash
+.venv/bin/python scripts/run_all_experiments.py
+```
+
 ## Seeds
 
 | Experiment | Seed |

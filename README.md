@@ -97,6 +97,7 @@ python3 -m venv .venv
 .venv/bin/python scripts/check_ppo_results.py
 .venv/bin/python scripts/check_all_results.py
 .venv/bin/python scripts/summarize_results.py
+.venv/bin/python scripts/run_all_experiments.py
 ```
 
 Useful options:
