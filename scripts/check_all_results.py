@@ -13,6 +13,8 @@ CHECKS = [
     "check_dqn_results.py",
     "check_policy_gradient_results.py",
     "check_ppo_results.py",
+    "check_markdown_links.py",
+    "check_readme_results.py",
 ]
 
 
